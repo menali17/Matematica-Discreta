@@ -126,7 +126,7 @@ long long solicitar_num(char *nome) {
 long long inverso_mod(long long a, long long m) {
     long long r1 = a, r2 = m;        // restos
     long long s1 = 1, s2 = 0;        // coeficientes para a
-    long long t1 = 0, t2 = 1;        // coeficientes para 'm'
+    long long t1 = 0, t2 = 1;        // coeficientes para m
     long long q, r, s, t;
     int iter = 0;
 
@@ -247,25 +247,48 @@ void codificar_decodificar(long long E, long long D, long long n, long long phi_
 
     // Pre-codificacao 
     int blocos[1024];
+    char originais[1024];      
+    char is_lower[1024];       
     int tamanho = 0;
     for(int i=0; mensagem[i] != '\0' && mensagem[i] != '\n'; i++) {
         int cod = pre_codificar(mensagem[i]);
         if(cod == -1) continue; 
-        blocos[tamanho++] = cod;
+        blocos[tamanho] = cod;
+        originais[tamanho] = mensagem[i];
+        is_lower[tamanho] = (mensagem[i] >= 'a' && mensagem[i] <= 'z') ? 1 : 0;
+        tamanho++;
+    }
+
+   
+    int width_c = 1;
+    {
+        long long tmp = n - 1;
+        width_c = 0;
+        do { width_c++; tmp /= 10; } while (tmp > 0);
     }
 
     // Codificacao
     long long cifrados[1024];
     printf("\n=== Criptografando mensagem ===\n");
     for(int i=0; i<tamanho; i++) {
-        printf("\nBloco M = %02d -> letra: '%c'\n", blocos[i], decodificar(blocos[i]));
+        
+        printf("\nBloco M = %02d -> letra: '%c'\n", blocos[i], originais[i]);
         cifrados[i] = exp_mod(blocos[i], E, n, phi_n);
-        printf("Bloco Codificado C = %lld\n", cifrados[i]);
+        if (cifrados[i] == 0) {
+          
+            printf("Bloco Codificado C = %02lld\n", cifrados[i]);
+        } else {
+            printf("Bloco Codificado C = %0*lld\n", width_c, cifrados[i]);
+        }
     }
 
     printf("\nMensagem criptografada:\n");
     for(int i=0; i<tamanho; i++) {
-        printf("%lld ", cifrados[i]);
+        if (cifrados[i] == 0) {
+            printf("%02lld ", cifrados[i]);
+        } else {
+            printf("%0*lld ", width_c, cifrados[i]);
+        }
     }
     printf("\n");
 
@@ -273,11 +296,20 @@ void codificar_decodificar(long long E, long long D, long long n, long long phi_
     printf("\n=== Decodificando mensagem ===\n");
     char decodificada[1024];
     for(int i=0; i<tamanho; i++) {
-        printf("\nBloco C = %lld\n", cifrados[i]);
+        if (cifrados[i] == 0) {
+            printf("\nBloco C = %02lld\n", cifrados[i]);
+        } else {
+            printf("\nBloco C = %0*lld\n", width_c, cifrados[i]);
+        }
         long long M = exp_mod(cifrados[i], D, n, phi_n);
-        char letra = decodificar((int)M);
-        printf("Bloco decodificado M = %lld -> letra: '%c'\n", M, letra);
-        decodificada[i] = letra;
+        char letra = decodificar((int)M); // retorna ' ' 
+        char letra_dec = letra;
+        if (M != 0 && is_lower[i]) {
+            
+            letra_dec = (char)(letra + ('a' - 'A'));
+        }
+        printf("Bloco decodificado M = %02lld -> letra: '%c'\n", M, letra_dec);
+        decodificada[i] = letra_dec;
     }
     decodificada[tamanho] = '\0';
 
@@ -285,7 +317,7 @@ void codificar_decodificar(long long E, long long D, long long n, long long phi_
     printf("\nMensagem decodificada: %s\n", decodificada);
 }
 
-// Teste de primalidade simples (suficiente para 3-4 digitos)
+
 int is_primo(long long n) {
     if (n < 2) return 0;
     if (n % 2 == 0) return n == 2;
@@ -308,7 +340,7 @@ int main() {
     if (p == -1) { printf("\nFalha na fatoracao de N1. Encerrando.\n"); return 1; }
     long long cofator_N1 = (p != 0) ? (N1 / p) : 0;
     if (p <= 1 || cofator_N1 <= 1 || p == cofator_N1 || !is_primo(p) || !is_primo(cofator_N1)) {
-        printf("\n[Validacao] N1 nao atende: deve ser produto de primos distintos. Fatores obtidos: %lld e %lld\n", p, cofator_N1);
+        printf("\n[Validacao] N1 nao atende: Cada N deve ser produto de primos distintos para que o método ρ de Pollard seja eficiente. Fatores obtidos: %lld e %lld\n", p, cofator_N1);
         return 1;
     }
 
@@ -316,7 +348,7 @@ int main() {
     if (q == -1) { printf("\nFalha na fatoracao de N2. Encerrando.\n"); return 1; }
     long long cofator_N2 = (q != 0) ? (N2 / q) : 0;
     if (q <= 1 || cofator_N2 <= 1 || q == cofator_N2 || !is_primo(q) || !is_primo(cofator_N2)) {
-        printf("\n[Validacao] N2 nao atende: deve ser produto de primos distintos. Fatores obtidos: %lld e %lld\n", q, cofator_N2);
+        printf("\n[Validacao] N2 nao atende: Cada Ni deve ser produto de primos distintos para que o método ρ de Pollard seja eficiente. Fatores obtidos: %lld e %lld\n", q, cofator_N2);
         return 1;
     }
 

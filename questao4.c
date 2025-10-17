@@ -95,5 +95,7 @@ int main() {
 }
 
 
-//Para H = 7, G = 3, Zn = 11, x = 10 e n1 = 13
- //O resultado final é 4
+/* Para H = 7, G = 3, Zn = 11, x = 10 e n1 = 13
+ O resultado final é 4
+ 
+ */
