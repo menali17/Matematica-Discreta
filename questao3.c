@@ -78,7 +78,7 @@ int main() {
         return 0;
     }
     else if (N == 1) {
-            printf("\n 1 = 1^1 (Não possui fatores primos)\n");
+            printf("\n O número 1 não pode ser decomposto em fatores primos\n");
             printf("\nRazao de Eficiencia = o(1)/t(1) = 1/1 = 1.00\n");
             return 0;
     }
