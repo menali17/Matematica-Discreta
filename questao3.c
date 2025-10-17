@@ -77,6 +77,11 @@ int main() {
         printf("Erro: o valor de N deve estar entre 1 e 105.\n");
         return 0;
     }
+    else if (N == 1) {
+            printf("\n 1 = 1^1 (Não possui fatores primos)\n");
+            printf("\nRazao de Eficiencia = o(1)/t(1) = 1/1 = 1.00\n");
+            return 0;
+    }
 
     qtd = fatorar(N, primos, expoentes);
 
