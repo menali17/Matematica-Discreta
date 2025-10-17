@@ -3,4 +3,4 @@ Alunos:
 - Enzo Menali Vettorato Toledo - 241011054
 - Geovanna Alves Umbelino - 232014450
 ---
-### Observação: As respostas da questão 4 estão presentes no código da questão 4, em forma de comentário
+### Observação: As respostas da questão 4 estão presentes no código da questão, em forma de comentário
